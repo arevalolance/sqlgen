@@ -1,0 +1,37 @@
+{
+  "name": "sqlgen-scripts",
+  "version": "1.0.0",
+  "description": "Demonstration scripts for SqlGen - Text-to-SQL library",
+  "type": "module",
+  "scripts": {
+    "setup": "tsx 01-setup-and-train.ts",
+    "basic": "tsx 02-basic-queries.ts",
+    "advanced": "tsx 03-advanced-queries.ts",
+    "interactive": "tsx 04-interactive-demo.ts",
+    "demo": "npm run setup && npm run basic && npm run advanced",
+    "full-demo": "npm run setup && npm run basic && npm run advanced && npm run interactive"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "sql",
+    "text-to-sql",
+    "ai",
+    "openai",
+    "database",
+    "postgresql",
+    "effect-ts",
+    "demo"
+  ],
+  "author": "SqlGen Demo",
+  "license": "MIT"
+}
