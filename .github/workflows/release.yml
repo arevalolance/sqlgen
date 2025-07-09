@@ -11,7 +11,7 @@ permissions: {}
 
 jobs:
   release:
-    if: github.repository_owner == 'Effect-Ts'
+    if: github.repository_owner == 'arevalolance'
     name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -21,6 +21,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install dependencies
         uses: ./.github/actions/setup
       - name: Create Release Pull Request or Publish
