@@ -101,8 +101,11 @@ const make = (): Effect.Effect<
     }
   })
 
-export const TrainingLive: Layer.Layer<TrainingService, TrainingError, PostgresService | QdrantService | TextToSqlService> =
-  Layer.effect(TrainingService, make())
+export const TrainingLive: Layer.Layer<
+  TrainingService,
+  TrainingError,
+  PostgresService | QdrantService | TextToSqlService
+> = Layer.effect(TrainingService, make())
 
 export const makeTrainingService = (): Effect.Effect<
   TrainingService,

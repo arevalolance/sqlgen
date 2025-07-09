@@ -1,32 +1,32 @@
 #!/usr/bin/env tsx
 
-import { config } from 'dotenv'
-import { Effect } from 'effect'
-import { createSqlGen } from '../src/index.js'
+import { config } from "dotenv"
+import { Effect } from "effect"
+import { createSqlGen } from "../src/index.js"
 
 // Load environment variables
-config({ path: '../.env' })
+config({ path: "../.env" })
 
 async function test() {
   try {
-    console.log('Testing basic SqlGen setup...')
-    
+    console.log("Testing basic SqlGen setup...")
+
     const sqlGenConfig = {
       postgres: {
-        host: 'localhost',
+        host: "localhost",
         port: 5432,
-        database: 'dashboard_dev',
-        user: 'postgres',
-        password: 'postgres',
+        database: "dashboard_dev",
+        user: "postgres",
+        password: "postgres",
         ssl: false
       },
       qdrant: {
-        url: 'http://localhost:6333',
-        collectionName: 'sql_schemas'
+        url: "http://localhost:6333",
+        collectionName: "sql_schemas"
       },
       textToSql: {
-        model: 'gpt-4',
-        embeddingModel: 'text-embedding-3-small',
+        model: "gpt-4",
+        embeddingModel: "text-embedding-3-small",
         maxTokens: 1000,
         temperature: 0.1
       },
@@ -38,16 +38,15 @@ async function test() {
     }
 
     const sqlGen = createSqlGen(sqlGenConfig)
-    console.log('✅ SqlGen instance created successfully')
+    console.log("✅ SqlGen instance created successfully")
 
     // Test ask method
     const result = await Effect.runPromise(sqlGen.ask("What tables exist in the database?"))
-    console.log('✅ Ask method works:', result)
-
+    console.log("✅ Ask method works:", result)
   } catch (error) {
-    console.error('❌ Test failed:', error)
+    console.error("❌ Test failed:", error)
     if (error instanceof Error) {
-      console.error('Stack:', error.stack)
+      console.error("Stack:", error.stack)
     }
   }
 }
