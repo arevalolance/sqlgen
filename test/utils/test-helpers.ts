@@ -4,6 +4,7 @@ import type { QueryPipelineConfig } from "@template/basic/services/query-pipelin
 import type { TextToSqlConfig } from "@template/basic/services/text-to-sql.js"
 import { Effect, Layer } from "effect"
 import { newDb } from "pg-mem"
+import { vi } from "@effect/vitest"
 
 // Mock PostgreSQL configuration for testing
 export const mockPostgresConfig: PostgresConfig = {
@@ -46,15 +47,15 @@ export const createTestDatabase = () => {
       id SERIAL PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT NOW()
     );
     
     CREATE TABLE orders (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users(id),
-      total_amount DECIMAL(10,2) NOT NULL,
+      user_id INTEGER,
+      total_amount NUMERIC NOT NULL,
       status VARCHAR(20) DEFAULT 'pending',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT NOW()
     );
   `)
 
@@ -131,6 +132,86 @@ export class MockQdrantClient {
     this.vectors.delete(collectionName)
     return { result: true }
   }
+}
+
+// Test DDL fixtures for training
+export const testDDLs = {
+  users: `
+    CREATE TABLE users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `,
+  orders: `
+    CREATE TABLE orders (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER,
+      total_amount NUMERIC NOT NULL,
+      status VARCHAR(20) DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `,
+  products: `
+    CREATE TABLE products (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      price NUMERIC NOT NULL,
+      description TEXT
+    );
+  `
+}
+
+// Test vector records for Qdrant
+export const testVectorRecords = [
+  {
+    id: "schema_1",
+    vector: Array.from({ length: 1536 }, () => Math.random() - 0.5),
+    payload: {
+      content: testDDLs.users,
+      metadata: {
+        type: "schema",
+        table: "users"
+      }
+    }
+  },
+  {
+    id: "schema_2", 
+    vector: Array.from({ length: 1536 }, () => Math.random() - 0.5),
+    payload: {
+      content: testDDLs.orders,
+      metadata: {
+        type: "schema",
+        table: "orders"
+      }
+    }
+  }
+]
+
+// Additional test fixture
+export const completeSchema = `
+  CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+  
+  CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    total_amount NUMERIC NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`
+
+// Mock TextToSql service for tests
+export const mockTextToSqlService = {
+  generateSql: vi.fn(),
+  trainFromSchema: vi.fn(),
+  executeQuery: vi.fn()
 }
 
 // Helper to create test Effects that can be safely run
